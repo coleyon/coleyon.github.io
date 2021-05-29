@@ -1,3 +1,9 @@
-/* img {
-    box-shadow: 5px 5px 12px white;
-} */
+.image-process-article-image {
+    border: 2px solid #fff;
+    border-radius: 8px;
+}
+
+
+aside.border {
+    box-shadow: 3px 15px 8px -10px rgba(0, 0, 0, 0.3)
+}
