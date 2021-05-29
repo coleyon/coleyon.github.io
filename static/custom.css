@@ -7,3 +7,24 @@
 aside.border {
     box-shadow: 3px 15px 8px -10px rgba(0, 0, 0, 0.3)
 }
+
+
+article div h1 {
+    border-bottom: 4px solid #e7746f;
+}
+
+article div h2 {
+    border-bottom: 2px dotted #e7746f;
+    width: 80%;
+}
+
+header h1,
+header h2 {
+    color: #e7746f;
+    font-weight: 700;
+}
+
+article hr {
+    border-top: 2px dashed;
+    width: 5vw;
+}

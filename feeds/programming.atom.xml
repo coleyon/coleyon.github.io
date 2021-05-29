@@ -10,40 +10,31 @@ Python と discord.py を使用します。&lt;/p&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;hr/&gt;
 &lt;p&gt;&lt;strong&gt;やってみた&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a href="https://pypi.org/project/discord.py/"&gt;discord.py&lt;/a&gt; を使って、オンラインゲームのクエストや対戦マッチング相手を募集する時に使える Bot を作り、1 か月ほど実際に使ってみましたので、記事にしてみます。&lt;/p&gt;
-&lt;hr/&gt;
 &lt;h1&gt;概略仕様&lt;/h1&gt;
-&lt;hr/&gt;
 &lt;h2&gt;コード一式&lt;/h2&gt;
 &lt;p&gt;論よりコードの方はこちら。
 &lt;a href="https://github.com/coleyon/discord-partypoll"&gt;https://github.com/coleyon/discord-partypoll&lt;/a&gt;&lt;/p&gt;
-&lt;hr/&gt;
 &lt;p&gt;&lt;strong&gt;機能&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;ざっくり言えば、以下 2 つの機能から成る Bot です。&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;PartyPoll&lt;/code&gt; - &lt;a href="https://top.gg/bot/simplepoll"&gt;SimplePoll&lt;/a&gt; に似た、イベントの周知と参加者募集ができる機能。&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;Cron&lt;/code&gt; - PartyPoll のコマンドを Bot 自身に、 &lt;a href="https://linuxjm.osdn.jp/html/cron/man5/crontab.5.html#lbAD"&gt;cron&lt;/a&gt; ライクな設定書式でスケジューリング・定時実行させる機能&lt;/li&gt;
 &lt;/ul&gt;
-&lt;hr/&gt;
 &lt;p&gt;&lt;strong&gt;環境&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Python プログラムとしての Bot が、Docker コンテナ上で実行される構成です。&lt;/p&gt;
-&lt;p&gt;&lt;img alt="" class="image-process-article-image" src="/images/derivatives/article-image/discord-cronlike-scheduling-2021-05-29-22-15-48.png"/&gt;&lt;/p&gt;
-&lt;hr/&gt;
+&lt;p&gt;&lt;img alt="" class="image-process-article-image" src="/images/derivatives/article-image/discord-cronlike-scheduling-2021-05-29-23-05-11.png"/&gt;&lt;/p&gt;
 &lt;h1&gt;環境構築&lt;/h1&gt;
-&lt;hr/&gt;
 &lt;p&gt;&lt;strong&gt;サーバと OS を用意する&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;例えば EC2 上に、&lt;code&gt;Ubuntu 18.04 LTS x86-64&lt;/code&gt; を立てます。無料利用枠内で十分です。&lt;/p&gt;
 &lt;p&gt;&lt;img alt="" class="image-process-article-image" src="/images/derivatives/article-image/discord-cronlike-scheduling-2021-05-29-22-15-59.png"/&gt;&lt;/p&gt;
-&lt;hr/&gt;
 &lt;p&gt;&lt;strong&gt;Docker サーバ環境をインストールする&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;docker と compose をインストールします。&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href="https://docs.docker.com/engine/install/ubuntu/"&gt;https://docs.docker.com/engine/install/ubuntu/&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="https://docs.docker.com/compose/install/"&gt;https://docs.docker.com/compose/install/&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;hr/&gt;
 &lt;p&gt;&lt;strong&gt;Docker サーバ環境をインストールする&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;こんな風になったと思います。&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ docker --version
@@ -56,7 +47,6 @@ $ id
 ,999&lt;span class="o"&gt;(&lt;/span&gt;docker&lt;span class="o"&gt;)&lt;/span&gt;
 $ 
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;hr/&gt;
 &lt;p&gt;&lt;strong&gt;Docker コンテナをビルドする&lt;/strong&gt;&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ git clone  https://github.com/coleyon/discord-partypoll.git
 Cloning into &lt;span class="s1"&gt;'discord-partypoll'&lt;/span&gt;...
@@ -68,13 +58,10 @@ $ docker images &lt;span class="p"&gt;|&lt;/span&gt; grep partypoll
 discord-partypoll_discord-bot  latest ...
 $ 
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;hr/&gt;
 &lt;h1&gt;Bot を Discord サーバに誘う&lt;/h1&gt;
-&lt;hr/&gt;
 &lt;p&gt;&lt;strong&gt;Discord アプリを作る&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a href="https://discord.com/developers/applications"&gt;Developer Portal&lt;/a&gt; 上でアプリケーションを作成します。&lt;/p&gt;
 &lt;p&gt;&lt;img alt="" class="image-process-article-image" src="/images/derivatives/article-image/discord-cronlike-scheduling-2021-05-29-22-16-20.png"/&gt;&lt;/p&gt;
-&lt;hr/&gt;
 &lt;p&gt;&lt;strong&gt;Bot の OAuth2 Token を Bot プログラムにセットする&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;アプリの &lt;code&gt;General Information&lt;/code&gt; メニューから &lt;code&gt;Client Secret&lt;/code&gt; を得て、&lt;code&gt;docker-compose.yml&lt;/code&gt; の &lt;code&gt;DISCORD_BOT_TOKEN&lt;/code&gt; にセットします。&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="nt"&gt;version&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;"3"&lt;/span&gt;
@@ -85,57 +72,45 @@ $
     &lt;span class="nt"&gt;environment&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; 
       &lt;span class="nt"&gt;DISCORD_BOT_TOKEN&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;"yourtoken"&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;hr/&gt;
 &lt;p&gt;&lt;strong&gt;Bot を Discord サーバに誘う&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;アプリの &lt;code&gt;OAuth2&lt;/code&gt; メニューから Scopes が BOT となる OAuth2 URL を得ます Permissions は &lt;code&gt;Send Messages&lt;/code&gt;, &lt;code&gt;Manage Messages&lt;/code&gt;, &lt;code&gt;Attach Files&lt;/code&gt;, &lt;code&gt;Mention Everyone&lt;/code&gt;, &lt;code&gt;Add Reactions&lt;/code&gt; を与えてください。&lt;/p&gt;
-&lt;hr/&gt;
 &lt;p&gt;&lt;strong&gt;Bot を Discord サーバに誘う&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;OAuth2 URL にブラウザでアクセスし、Bot を Discord サーバに招きます。&lt;/p&gt;
 &lt;p&gt;&lt;img alt="" class="image-process-article-image" src="/images/derivatives/article-image/discord-cronlike-scheduling-2021-05-29-22-16-29.png"/&gt;&lt;/p&gt;
-&lt;hr/&gt;
 &lt;h1&gt;Bot プログラムを起動する&lt;/h1&gt;
-&lt;hr/&gt;
 &lt;p&gt;&lt;strong&gt;Bot プログラムの依存ライブラリを生成する&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;Pipfile&lt;/code&gt; から &lt;code&gt;requirements.yml&lt;/code&gt; を生成します。&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ pipenv lock -r &amp;gt; requirements.txt
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;hr/&gt;
 &lt;p&gt;&lt;strong&gt;Bot プログラムを起動する&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Bot プログラム（の実行環境としての Docker コンテナ）を起動します。&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ docker-compose up -d
 $ docker-compose logs -f
 Attaching to discord-partypoll_discord-bot_1
-discord-bot_1  &lt;span class="p"&gt;|&lt;/span&gt; -----Logged &lt;span class="k"&gt;in&lt;/span&gt; info-----
+discord-bot_1  &lt;span class="p"&gt;|&lt;/span&gt; -Logged &lt;span class="k"&gt;in&lt;/span&gt; info-
 discord-bot_1  &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;BOT_NAME&lt;span class="o"&gt;}&lt;/span&gt;
 discord-bot_1  &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;BOT_ID&lt;span class="o"&gt;}&lt;/span&gt;
 discord-bot_1  &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;DISCORDPY_VERSION&lt;span class="o"&gt;}&lt;/span&gt;
-discord-bot_1  &lt;span class="p"&gt;|&lt;/span&gt; ------------------------
+discord-bot_1  &lt;span class="p"&gt;|&lt;/span&gt; 
 discord-bot_1  &lt;span class="p"&gt;|&lt;/span&gt; Poll Extension Enabled.
 discord-bot_1  &lt;span class="p"&gt;|&lt;/span&gt; Cron Extension Enabled.
 ^CERROR: Aborting.
 $ 
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Bot プログラムを起動すると、Discord 上の Bot がオンラインとなり、使用可能な状態になります。&lt;/p&gt;
-&lt;hr/&gt;
 &lt;h1&gt;パーティ募集コマンド ppoll を使ってみる&lt;/h1&gt;
-&lt;hr/&gt;
 &lt;p&gt;&lt;strong&gt;募集全体の人数制限が可能な募集&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;チーム全体で計 20 名までを上限とするパーティの募集をするコマンドです。 &lt;code&gt;/ppoll total 全 20 名 3 チーム 20 TeamA TeamB TeamC&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;&lt;img alt="" class="image-process-article-image" src="/images/derivatives/article-image/discord-cronlike-scheduling-2021-05-29-22-16-51.png"/&gt;&lt;/p&gt;
-&lt;hr/&gt;
 &lt;p&gt;&lt;strong&gt;個々の募集項目毎に人数制限が可能な募集&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;個々のチームで計 4 名までを上限とするパーティの募集をするコマンドです。 &lt;code&gt;/ppoll each 各 4 名 3 チーム [4]TeamA [4]TeamB [4]TeamC&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;&lt;img alt="" class="image-process-article-image" src="/images/derivatives/article-image/discord-cronlike-scheduling-2021-05-29-22-16-58.png"/&gt;&lt;/p&gt;
-&lt;hr/&gt;
 &lt;p&gt;&lt;strong&gt;ヘルプコマンド&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;詳しくは &lt;code&gt;/ppoll help&lt;/code&gt; コマンドの説明か、Git リポジトリの &lt;a href="https://github.com/coleyon/discord-partypoll/blob/master/README.md"&gt;readme.md&lt;/a&gt; をご覧ください。&lt;/p&gt;
-&lt;hr/&gt;
 &lt;h1&gt;定時実行コマンド cron を使ってみる&lt;/h1&gt;
-&lt;hr/&gt;
 &lt;p&gt;&lt;strong&gt;実行タイムゾーン指定&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;実行 Timezone を設定できます。デフォルトは日本時間 (Asia/Tokyo) ですが、米国東部時間 (EST) などに設定することもできます。&lt;/p&gt;
 &lt;p&gt;&lt;img alt="" class="image-process-article-image" src="/images/derivatives/article-image/discord-cronlike-scheduling-2021-05-29-22-17-28.png"/&gt;&lt;/p&gt;
-&lt;hr/&gt;
 &lt;p&gt;&lt;strong&gt;ジョブの定義と有効化&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Job を定義します。&lt;/li&gt;
@@ -143,13 +118,10 @@ $
 &lt;li&gt;cron を稼働状態にします (2020/10/30 23:11 に実行したとします )&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;/cron enable&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;hr/&gt;
 &lt;p&gt;&lt;strong&gt;ジョブの稼働例&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;こうなります。詳しくは &lt;code&gt;/cron help&lt;/code&gt; コマンドの説明か、Git リポジトリの &lt;a href="https://github.com/coleyon/discord-partypoll/blob/master/README.md"&gt;readme.md&lt;/a&gt; をご覧ください。&lt;/p&gt;
 &lt;p&gt;&lt;img alt="" class="image-process-article-image" src="/images/derivatives/article-image/discord-cronlike-scheduling-2021-05-29-22-17-08.png"/&gt;&lt;/p&gt;
-&lt;hr/&gt;
 &lt;h1&gt;参考資料&lt;/h1&gt;
-&lt;hr/&gt;
 &lt;p&gt;基本的に&lt;a href="https://discordpy.readthedocs.io/en/latest/"&gt;公式 Docs&lt;/a&gt;がバイブルですが、作っている途中でオンラインゲームのメンバーさんより、以下の本をご紹介頂きました。&lt;/p&gt;
 &lt;p&gt;読んだところとても分かりやすく公式マニュアルでは把握できなかった内容が多々あったりして有用でしたので、Discord の Bot 作りに興味がある方にはオススメです。&lt;/p&gt;
 &lt;ul&gt;
