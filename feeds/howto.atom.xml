@@ -2,9 +2,14 @@
 <feed xmlns="http://www.w3.org/2005/Atom"><title>wof - howto</title><link href="https://coleyon.github.io/" rel="alternate"/><link href="https://coleyon.github.io/feeds/howto.atom.xml" rel="self"/><id>https://coleyon.github.io/</id><updated>2017-10-22T12:00:00+09:00</updated><subtitle>Techblog</subtitle><entry><title>screen コマンドを使った linux terminal セッション共有</title><link href="https://coleyon.github.io/screen.html" rel="alternate"/><published>2017-10-22T12:00:00+09:00</published><updated>2017-10-22T12:00:00+09:00</updated><author><name>coleyon</name></author><id>tag:coleyon.github.io,2017-10-22:/screen.html</id><summary type="html">&lt;p&gt;Screenコマンドを使うと、Linuxコンソールを複数ユーザセッション間で共有できます。&lt;/p&gt;</summary><content type="html">&lt;p&gt;Screen コマンドを使うと、Linux コンソールを複数ユーザセッション間で共有できます。&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;参考&lt;ul&gt;
-&lt;li&gt;みやすい概要&lt;/li&gt;
-&lt;li&gt;https://mistymagich.wordpress.com/2011/11/08/multiuser_screen_command&lt;/li&gt;
-&lt;li&gt;multiuser mode 権限制御系操作 - http://aperiodic.net/screen/multiuser&lt;/li&gt;
+&lt;li&gt;みやすい概要&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://mistymagich.wordpress.com/2011/11/08/multiuser_screen_command"&gt;https://mistymagich.wordpress.com/2011/11/08/multiuser_screen_command&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;multiuser mode 権限制御系操作&lt;ul&gt;
+&lt;li&gt;&lt;a href="http://aperiodic.net/screen/multiuser"&gt;http://aperiodic.net/screen/multiuser&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;li&gt;ユースケース&lt;ul&gt;
