@@ -1,0 +1,279 @@
+
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="True" name="HandheldFriendly"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="index, follow" name="robots"/>
+<link href="https://fonts.gstatic.com" rel="preconnect"/>
+<!-- <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300&family=Source+Sans+Pro:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet"> -->
+<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100;300;700&amp;family=Source+Sans+Pro:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&amp;display=swap" rel="stylesheet"/>
+<link href="https://coleyon.github.io/theme/stylesheet/style.less" rel="stylesheet/less" type="text/css"/>
+<script src="//cdnjs.cloudflare.com/ajax/libs/less.js/2.5.1/less.min.js" type="text/javascript"></script>
+<link href="https://coleyon.github.io/theme/pygments/github.min.css" id="pygments-light-theme" rel="stylesheet" type="text/css"/>
+<link href="https://coleyon.github.io/theme/tipuesearch/tipuesearch.min.css" rel="stylesheet">
+<link href="https://coleyon.github.io/theme/font-awesome/css/fontawesome.css" rel="stylesheet" type="text/css"/>
+<link href="https://coleyon.github.io/theme/font-awesome/css/brands.css" rel="stylesheet" type="text/css"/>
+<link href="https://coleyon.github.io/theme/font-awesome/css/solid.css" rel="stylesheet" type="text/css"/>
+<link href="https://coleyon.github.io/static/custom.css" rel="stylesheet"/>
+<link href="https://coleyon.github.io/feeds/all.atom.xml" rel="alternate" title="wof Atom" type="application/atom+xml"/>
+<link href="https://coleyon.github.io/images/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
+<link href="https://coleyon.github.io/images/favicon.ico" rel="icon" type="image/x-icon"/>
+<!-- Google Analytics -->
+<script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'G-RCE39CRW4N', 'auto');
+  ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
+<meta content="coleyon" name="author"/>
+<meta content="Python バッチスクリプトで Google Calendar からスケジュール情報を採取し、CalDAV サーバへ複製する例を紹介します。" name="description"/>
+<meta content="GoogleAPI, python, PubSub, CloudFunctions, CalDAV" name="keywords"/>
+<meta content="wof" property="og:site_name">
+<meta content="GCP で Google Calendar を CalDAV サーバに複製する" property="og:title"/>
+<meta content="Python バッチスクリプトで Google Calendar からスケジュール情報を採取し、CalDAV サーバへ複製する例を紹介します。" property="og:description"/>
+<meta content="ja_JP" property="og:locale"/>
+<meta content="https://coleyon.github.io/google, python, programming.html" property="og:url"/>
+<meta content="article" property="og:type"/>
+<meta content="2019-10-02 00:00:00+09:00" property="article:published_time"/>
+<meta content="2019-10-02 00:00:00+09:00" property="article:modified_time"/>
+<meta content="https://coleyon.github.io/author/coleyon.html" property="article:author"/>
+<meta content="programming" property="article:section">
+<meta content="GoogleAPI" property="article:tag"/>
+<meta content="python" property="article:tag"/>
+<meta content="PubSub" property="article:tag"/>
+<meta content="CloudFunctions" property="article:tag"/>
+<meta content="CalDAV" property="article:tag"/>
+<meta content="https://coleyon.github.io/images/profile.png" property="og:image"/>
+<title>wof – GCP で Google Calendar を CalDAV サーバに複製する</title>
+<script async="" src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-8759671048737588",
+      enable_page_level_ads: true
+    });
+  </script>
+<!-- Google Tag Manager -->
+<script>
+  (function(w,d,s,l,i){
+    w[l]=w[l]||[];
+    w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
+    var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
+    j.async=true;
+    j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+    f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-MFGZCPR');
+</script>
+<!-- End Google Tag Manager --></meta></meta></link></head>
+<body class="light-theme">
+<!-- Google Tag Manager -->
+<noscript>
+<iframe height="0" src="https://www.googletagmanager.com/ns.html?id=GTM-MFGZCPR" style="display:none;visibility:hidden" width="0"></iframe>
+</noscript>
+<!-- End Google Tag Manager --> <aside>
+<div>
+<h1>
+<a href="https://coleyon.github.io">wof</a>
+</h1>
+<p>Techblog</p>
+<form action="/search.html" class="navbar-search" role="search">
+<input id="tipue_search_input" name="q" placeholder="Search..." type="text"/>
+</form>
+<ul class="social">
+<li>
+<a class="sc-github" href="https://github.com/coleyon/" target="_blank">
+<i class="fab fa-github"></i>
+</a>
+</li>
+</ul>
+</div>
+<script async="" src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle ads-aside" data-ad-client="ca-pub-8759671048737588" data-ad-slot="1234561"></ins>
+<script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</aside>
+<main>
+<nav>
+<a href="https://coleyon.github.io">Home</a>
+<a href="/archives.html">Archives</a>
+<a href="/categories.html">Categories</a>
+<a href="/tags.html">Tags</a>
+<a href="https://coleyon.github.io/feeds/all.atom.xml">Atom</a>
+</nav>
+<article class="single">
+<header>
+<h1 id="google, python, programming">GCP で Google Calendar を CalDAV サーバに複製する</h1>
+<p>
+      Posted on 2019-10-02 (水) in <a href="https://coleyon.github.io/category/programming.html">programming</a>
+</p>
+</header>
+<div>
+<p>Python バッチスクリプトで Google Calendar からスケジュール情報を採取し、CalDAV サーバへ複製する例を紹介します。</p>
+<h1>概要</h1>
+<ul>
+<li>GSuite 上の任意のユーザの Calendar に、Google Calendar API を介してアクセスする</li>
+<li>GCP の Cloud Functions にデプロイした Python バッチスクリプトを、Cloud Scheduler + Pub/Sub で定時実行する</li>
+<li>API アクセス認証を GCP の<a href="https://cloud.google.com/iam/docs/service-accounts?hl=ja">サービスアカウント</a>キーで行い、個々のカレンダーオーナーからのアクセス許可は不要とする</li>
+</ul>
+<p><strong>サンプルコード</strong></p>
+<p><a href="https://github.com/coleyon/gcalapi-caldav-sample">https://github.com/coleyon/gcalapi-caldav-sample</a></p>
+<p><strong>構成</strong></p>
+<p>グレーは環境設定、ブルーはバッチ処理です。</p>
+<p><img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-29-42.png"/></p>
+<h1>1. GSuite で API アクセスを許可する</h1>
+<p>アクセス対象としたいカレンダーが存在する GSuite 環境に対して、外部からの API アクセスを受付可能に設定をします。公式ドキュメントの、<a href="https://support.google.com/a/answer/60757?hl=ja">管理コンソールで API アクセスを有効にする</a> 手順になります。</p>
+<p><strong>API リファレンスを有効にする</strong></p>
+<p><img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-30-11.png"/></p>
+<p><strong>API アクセスを有効にする</strong></p>
+<p><img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-30-46.png"/></p>
+<h1>2. GCP にサービスアカウントを作成しキーを得る</h1>
+<p>今回は <code>サービスアカウントキー</code> を用いた認証ストラテジで Calendar API を利用します。なお、サービスアカウントではなくパーソナルなアカウントの認証ストラテジで API を利用する方式もありますが、当記事では対象外です。認証ストラテジの選択肢と差の解説は、<a href="https://cloud.google.com/docs/authentication/?hl=ja#authentication_strategies">こちらの公式ドキュメント</a>が分かりよいと思います。</p>
+<p><code>IAM と管理</code> &gt; <code>サービスアカウント</code> でサービスアカウントを作成します。</p>
+<p><img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-31-18.png"/></p>
+<p>サービスアカウントの鍵を生成し、JSON 形式で取得します。鍵は、バッチスクリプトが API アクセス認証時に使います。</p>
+<p><img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-31-33.png"/>
+<img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-31-42.png"/></p>
+<p>サービスアカウントのクライアント ID を確認します。クライアント ID は、バッチスクリプトの認証情報および、GSuite の API クライアントアクセス許可対象として使います。</p>
+<p><img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-31-48.png"/></p>
+<h1>3. GSuite で API クライアントアクセスを許可する</h1>
+<p>GSuite で、どのリソースに対する API アクセス操作を、誰に許可するかを設定します。設定手順は、<a href="https://support.google.com/a/answer/162106?hl=ja">OAuth: API クライアント アクセスの管理</a> になります。</p>
+<p>設定内容は、<code>クライアント名</code> には先に GCP 上で作成したサービスアカウントの <code>クライアント ID</code> を指定し、
+<code>スコープ</code> には <code>https://www.googleapis.com/auth/calendar.readonly</code>, <code>https://www.googleapis.com/auth/calendar.events.readonly</code> を指定して承認します。</p>
+<p><img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-32-24.png"/></p>
+<p>余談ですが、指定可能なスコープと API の仕様は <a href="https://developers.google.com/identity/protocols/googlescopes#calendarv3">API リファレンス</a> に書かれています。</p>
+<h1>4. CalDAV サーバを立てる</h1>
+<p>当サンプルでは、CalDAV サーバである <a href="https://radicale.org/">Radicale</a> に、Google Calendar から採取した情報を吐き出して、ユーザに利用させます。試験版の Radicale は <a href="https://hub.docker.com/search?q=radicale&amp;type=image">docker コンテナ</a> で立てるのが手っ取り早いです。</p>
+<p>起動するとこんな感じです。サーバの URL がアプリに与える環境変数の <code>CALDAV_SERVER_URL</code>、 ログイン情報が <code>CALDAV_SERVER_USER</code>, <code>CALDAV_SERVER_PASS</code> です。</p>
+<p><img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-32-43.png"/></p>
+<p>ログインすると、即カレンダーの作成画面になりますので、こんな感じで作ります。Title がカレンダー名であり、アプリに与える環境変数の <code>CALDAV_SERVER_CALENDAR_NAME</code> です。</p>
+<p><img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-32-49.png"/></p>
+<p>作成したカレンダーの URL は、<code>http://${HOSTNAME}:5232/${USERNAME}/${CALENDAR_ID}/</code> になり、環境変数 <code>CALDAV_SERVER_URL</code> に相当します。</p>
+<p><img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-32-55.png"/></p>
+<ul>
+<li>余談<ul>
+<li>CalDAV サーバは、例えば Thunderbird のカレンダー拡張（Lightning）のようなクライアントから参照・同期できる、ネットワークカレンダーサーバの規格です。<a href="https://tools.ietf.org/html/rfc4791">RFC 4791</a>で仕様が定義されており、いわゆる iCAL 形式 (<a href="https://tools.ietf.org/html/rfc2445">RFC 2445</a>) でデータ交換をします。</li>
+<li>そもそもカレンダーというモノは、割と面倒くさい概念（タイムゾーン、Free/Busy、参加者と参加不参加、繰り返しタスクなど）がありますので、車輪があるなら再発明しないで利用するのがお得です。</li>
+</ul>
+</li>
+</ul>
+<h1>5. GCP 上にバッチ処理を設置する</h1>
+<p><strong>Pub/Sub の作成</strong></p>
+<p>トピックを作成し、トピックの名前を確認しておきます。</p>
+<p><img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-33-11.png"/></p>
+<p><img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-33-18.png"/></p>
+<p>作成したトピックに対する、Pull タイプのサブスクリプションを作成します。サブスクライバとなる CloudFunction 宛のメッセージングを定義する事に相当します。</p>
+<p><img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-33-24.png"/></p>
+<p><img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-33-42.png"/></p>
+<p><strong>Cloud Schedule の登録</strong></p>
+<p>先ほど作成した Pub/Sub トピックをターゲットとするスケジュールを作成します。スケジュールが、Pub/Sub に対するパブリッシャとなる事に相当します。</p>
+<p><img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-33-59.png"/></p>
+<p>作成したら、試しにジョブを実行して Publish メッセージングが成功する事を確認しておきます。</p>
+<p><img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-34-05.png"/></p>
+<p><strong>Python スクリプトのデプロイ準備をする</strong></p>
+<p>Cloud Storage に、非公開バケット <code>function-codes</code> を 1 つ作ります。</p>
+<p><img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-34-31.png"/></p>
+<p>次に、<a href="https://github.com/coleyon/gcalapi-caldav-sample">スクリプト</a>の <code>credentials.json</code> を、先の手順で取得したサービスアカウントの JSON 形式の鍵に差し替えて、<code>Pipfile</code>, <code>Pipfile.lock</code>, <code>main.py</code>および、差し替え後の <code>credential.json</code> を 1 つの Zip ファイル <code>gcalendar-fetcher.zip</code> に圧縮し、先に作成した Cloud Storage のバケットにアップロードします。</p>
+<p><img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-34-37.png"/></p>
+<p><strong>Python スクリプトを Functions にデプロイする</strong></p>
+<p>バケット内の Zip ファイル <code>gcalendar-fetcher.zip</code> をソースとする関数を定義します。トリガーには、Pub/Sub に作成したトピック <code>test-getting-gcal-events</code> トピックを指定します。実行する関数には <a href="https://github.com/coleyon/gcalapi-caldav-sample/blob/master/main.py#L124">main 関数</a> を指定します。</p>
+<p><img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-35-06.png"/></p>
+<p>また、環境変数は <a href="https://github.com/coleyon/gcalapi-caldav-sample#environment-variables">こちらに定義した変数</a> を与えます。</p>
+<p><img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-35-15.png"/></p>
+<h1>6. 実行して結果を確認してみる</h1>
+<p>Cloud Scheduler に作成したタスクが実行済の場合は結果欄に「成功」が出ていると思います。まだスケジュールが走っていない場合は、実行ボタンを押下し発火させた結果を同様に確認します。</p>
+<p><img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-35-23.png"/></p>
+<p>また、Function にデプロイしたスクリプトが、Pub/Sub メッセージングを介して実行されていることも確認します。</p>
+<p><img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-35-29.png"/></p>
+<p>いずれも成功なら、CalDAV サーバに登録されたはずのカレンダー情報を閲覧してみます。radicale から ical をダウンロードして中身を確認してみましょう。ical フォーマットのデータが得られます。</p>
+<div class="highlight"><pre><span></span><code><span class="nv">BEGIN</span><span class="s s-Atom">:</span><span class="nv">VCALENDAR</span>
+<span class="nv">VERSION</span><span class="s s-Atom">:</span><span class="mf">2.0</span>
+<span class="nv">PRODID</span><span class="p">:-</span><span class="o">//</span><span class="nv">PYVOBJECT</span><span class="o">//</span><span class="nv">NONSGML</span> <span class="nv">Version</span> <span class="mi">1</span><span class="o">//</span><span class="nv">EN</span>
+<span class="nv">X</span><span class="o">-</span><span class="nv">WR</span><span class="o">-</span><span class="nv">CALDESC</span><span class="p">;</span><span class="nv">VALUE</span><span class="o">=</span><span class="nv">TEXT</span><span class="s s-Atom">:test</span>
+<span class="nv">X</span><span class="o">-</span><span class="nv">WR</span><span class="o">-</span><span class="nv">CALNAME</span><span class="p">;</span><span class="nv">VALUE</span><span class="o">=</span><span class="nv">TEXT</span><span class="s s-Atom">:test</span>
+<span class="nv">BEGIN</span><span class="s s-Atom">:</span><span class="nv">VEVENT</span>
+<span class="nv">UID</span><span class="s s-Atom">:xxxxxxxxxxxxxxxxxxx@google</span><span class="p">.</span><span class="s s-Atom">com</span>
+<span class="nv">DTSTART</span><span class="s s-Atom">:</span><span class="mi">20190913</span><span class="nv">T013000Z</span>
+<span class="nv">DTEND</span><span class="s s-Atom">:</span><span class="mi">20190913</span><span class="nv">T084500Z</span>
+<span class="nv">DTSTAMP</span><span class="s s-Atom">:</span><span class="mi">20190726</span><span class="nv">T050838Z</span>
+<span class="nv">LAST</span><span class="o">-</span><span class="nv">MODIFIED</span><span class="s s-Atom">:</span><span class="mi">20190726</span><span class="nv">T050856Z</span>
+<span class="nv">STATUS</span><span class="s s-Atom">:</span><span class="nv">CONFIRMED</span>
+<span class="nv">SUMMARY</span><span class="s s-Atom">: 展示会にいく</span>
+<span class="nv">TRANSP</span><span class="s s-Atom">:</span><span class="nv">OPAQUE</span>
+<span class="nv">URL</span><span class="s s-Atom">:</span><span class="nn">https</span><span class="p">:</span><span class="o">//</span><span class="s s-Atom">www</span><span class="p">.</span><span class="s s-Atom">google</span><span class="p">.</span><span class="s s-Atom">com</span><span class="o">/</span><span class="s s-Atom">calendar</span><span class="o">/</span><span class="s s-Atom">event?eid</span><span class="o">=</span><span class="nv">XXXXXXXXXXXXXXXXXXXXXXXX</span>
+<span class="nv">END</span><span class="s s-Atom">:</span><span class="nv">VEVENT</span>
+<span class="nv">BEGIN</span><span class="s s-Atom">:</span><span class="nv">VEVENT</span>
+<span class="nv">UID</span><span class="s s-Atom">:yyyyyyyyyyyyyyyyyyyyyyyyyy@google</span><span class="p">.</span><span class="s s-Atom">com</span>
+<span class="nv">DTSTART</span><span class="s s-Atom">:</span><span class="mi">20191004</span><span class="nv">T040000Z</span>
+<span class="p">...</span>
+<span class="nv">END</span><span class="s s-Atom">:</span><span class="nv">VEVENT</span>
+<span class="nv">END</span><span class="s s-Atom">:</span><span class="nv">VCALENDAR</span>
+</code></pre></div>
+<p>Thunderbird の Lightning 拡張でネットワークカレンダーとして見る方法もあります。
+<img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-35-41.png"/>
+環境変数 <code>CALDAV_SERVER_URL</code> に与えた URL が、ネットワークカレンダーの場所に相当します。
+<img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-35-47.png"/>
+<img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-35-52.png"/></p>
+<p>よく採れてます、使えそうですね。</p>
+</div>
+<div class="tag-cloud">
+<p>
+<a href="https://coleyon.github.io/tag/googleapi.html">GoogleAPI</a>
+<a href="https://coleyon.github.io/tag/python.html">python</a>
+<a href="https://coleyon.github.io/tag/pubsub.html">PubSub</a>
+<a href="https://coleyon.github.io/tag/cloudfunctions.html">CloudFunctions</a>
+<a href="https://coleyon.github.io/tag/caldav.html">CalDAV</a>
+</p>
+</div>
+<script async="" src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle ads-responsive" data-ad-client="ca-pub-8759671048737588" data-ad-slot="1234566"></ins>
+<script>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'coleyon-dev';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+    Please enable JavaScript to view comments.
+</noscript>
+<!-- End Disqus -->
+</article>
+<footer>
+<p>
+  © 2021  - This work is licensed under a <a href="http://creativecommons.org/licenses/by-sa/4.0/deed.en_US" rel="license" target="_blank">Creative Commons Attribution-ShareAlike</a>
+</p>
+<p>
+Built with <a href="http://getpelican.com" target="_blank">Pelican</a> using <a href="http://bit.ly/flex-pelican" target="_blank">Flex</a> theme
+</p><p>
+<a href="http://creativecommons.org/licenses/by-sa/4.0/" rel="license" target="_blank">
+<img alt="Creative Commons License" height="15" src="https://i.creativecommons.org/l/by-sa/4.0/80x15.png" style="border-width:0" title="Creative Commons License" width="80">
+</img></a>
+</p> </footer>
+</main>
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " wof ",
+  "url" : "https://coleyon.github.io",
+  "image": "https://coleyon.github.io/images/profile.png",
+  "description": "subdescr"
+}
+</script>
+</body>
+</html>
