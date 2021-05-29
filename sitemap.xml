@@ -5,8 +5,22 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://coleyon.github.io/</loc>
-<lastmod>2021-05-30T00:48:09-00:00</lastmod>
+<lastmod>2021-05-30T00:56:56-00:00</lastmod>
 <changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://coleyon.github.io/pages/about-this-site.html</loc>
+<lastmod>2021-05-30T00:56:56-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://coleyon.github.io/pages/policies.html</loc>
+<lastmod>2021-05-30T00:56:56-00:00</lastmod>
+<changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
