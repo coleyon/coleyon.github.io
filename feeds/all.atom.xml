@@ -157,7 +157,88 @@ $
 &lt;li&gt;&lt;a href="https://techbookfest.org/product/5755158612934656?productVariantID=5633838124367872"&gt;https://techbookfest.org/product/5755158612934656?productVariantID=5633838124367872&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</content><category term="programming"/><category term="discord"/><category term="python"/><category term="bot"/></entry><entry><title>GCP で Google Calendar を CalDAV サーバに複製する</title><link href="https://coleyon.github.io/google,%20python,%20programming.html" rel="alternate"/><published>2019-10-02T00:00:00+09:00</published><updated>2019-10-02T00:00:00+09:00</updated><author><name>coleyon</name></author><id>tag:coleyon.github.io,2019-10-02:/google, python, programming.html</id><summary type="html">&lt;p&gt;Python バッチスクリプトで Google Calendar からスケジュール情報を採取し、CalDAV サーバへ複製する例を紹介します。&lt;/p&gt;</summary><content type="html">&lt;p&gt;Python バッチスクリプトで Google Calendar からスケジュール情報を採取し、CalDAV サーバへ複製する例を紹介します。&lt;/p&gt;
+&lt;/ul&gt;</content><category term="programming"/><category term="discord"/><category term="python"/><category term="bot"/></entry><entry><title>GCP KMS を使って秘密情報を対称暗号化・復号化する</title><link href="https://coleyon.github.io/googleapis,%20python,%20programming.html" rel="alternate"/><published>2019-10-23T12:00:00+09:00</published><updated>2019-10-23T12:00:00+09:00</updated><author><name>coleyon</name></author><id>tag:coleyon.github.io,2019-10-23:/googleapis, python, programming.html</id><summary type="html">&lt;p&gt;KMSを利用して、認証情報などの秘密を暗号化・復号化する方法を紹介します&lt;/p&gt;</summary><content type="html">&lt;h1&gt;概要&lt;/h1&gt;
+&lt;p&gt;KMS を利用して、認証情報などの秘密を暗号化・復号化する方法を紹介します&lt;/p&gt;
+&lt;h1&gt;サンプルコードと環境&lt;/h1&gt;
+&lt;p&gt;&lt;strong&gt;サンプルコード&lt;/strong&gt;:
+この記事は、連載の 1 つ前の記事で作成した &lt;a href="https://github.com/coleyon/gcalapi-caldav-sample"&gt;バッチスクリプトのコード&lt;/a&gt; を例にした続きの内容です。
+コードを動かしたい人は、この記事よりも &lt;a href="https://github.com/coleyon/gcalapi-caldav-sample/tree/kms-enc-dec"&gt;readme.md&lt;/a&gt; 見てもらうと早いです。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;（前記事）対策前のコード : &lt;a href="https://github.com/coleyon/gcalapi-caldav-sample/tree/master"&gt;https://github.com/coleyon/gcalapi-caldav-sample/tree/master&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;（今記事）対策後のコード : &lt;a href="https://github.com/coleyon/gcalapi-caldav-sample/tree/kms-enc-dec"&gt;https://github.com/coleyon/gcalapi-caldav-sample/tree/kms-enc-dec&lt;/a&gt; (&lt;a href="https://github.com/coleyon/gcalapi-caldav-sample/commit/1b247827a1d5feaa34a6de3e095a04c6ceee8dc8#diff-5bc02cefb3ea9e27f1a6776eabd1935d"&gt;Diff&lt;/a&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;対策前のコードでは Calendar API を叩くために GCP サービスアカウントの鍵 &lt;code&gt;credential.json&lt;/code&gt; ファイルを認証情報として利用しますが、暗号化せずコードに同梱しています。
+対策後のコードでは、KMS を利用して鍵 &lt;code&gt;credential.json&lt;/code&gt; の内容を暗号化し、かつ暗号化した鍵をコードに含めない（Cloud Functions 実行時に環境変数で与える）ことでセキュリティを向上しています。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;環境&lt;/strong&gt;:&lt;/p&gt;
+&lt;p&gt;灰色アローは手作業、青アローはプログラム処理です。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="" src="/images/howto-encripting-secrets-using-google-kms-2021-05-29-22-56-39.png"/&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;生 JSON 鍵を得て KMS で対称暗号化し、バイナリ暗号鍵を得る&lt;/li&gt;
+&lt;li&gt;バイナリ暗号鍵を ASCII 化し、Cloud Functions の環境変数にセットする&lt;/li&gt;
+&lt;li&gt;コードは git、暗号鍵は環境変数をソースとして、Cloud Functions 上にデプロイする&lt;/li&gt;
+&lt;li&gt;Cloud Functions 上のスクリプトは、暗号鍵を KMS API で復号化する&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h1&gt;GKE KeyRing を作る&lt;/h1&gt;
+&lt;p&gt;暗号鍵メニューから、キーリングを適当な名前で作ります。今回は、今後も増えるだろうサービスアカウントのクレデンシャルをたくさんぶら下げるためのキーリング名にしました。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="" src="/images/howto-encripting-secrets-using-google-kms-2021-05-29-22-56-49.png"/&gt;&lt;/p&gt;
+&lt;h1&gt;GKE Key を作る&lt;/h1&gt;
+&lt;p&gt;キーリングにぶら下げるキーを作ります。Calendar API アクセス用サービスアカウントの JSON 形式のクレデンシャルである事を端的に示すキー名で作りました。目的は&lt;code&gt;対称暗号化 / 復号化&lt;/code&gt;です。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="" class="image-process-article-image" src="/images/derivatives/article-image/howto-encripting-secrets-using-google-kms-2021-05-29-22-56-57.png"/&gt;&lt;/p&gt;
+&lt;p&gt;サービスアカウントは強い権限（プロジェクトの管理者）を持たせる事が多いと思いますが、ローテーションを自動でかけて同じ暗号を使い続けないように設定する事もできます。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="" src="/images/howto-encripting-secrets-using-google-kms-2021-05-29-22-57-13.png"/&gt;&lt;/p&gt;
+&lt;h1&gt;秘密を暗号化する&lt;/h1&gt;
+&lt;p&gt;作業に先立って、生クレデンシャル JSON ファイルは、非公開の Storage &lt;code&gt;private-bucket&lt;/code&gt; を介してアップロードします。&lt;/p&gt;
+&lt;p&gt;暗号化は CloudShell で作業をします。サービスアカウントの JSON 形式生クレデンシャル&lt;code&gt;credentials.json&lt;/code&gt;を暗号化して、バイナリファイル&lt;code&gt;credentials.json.enc&lt;/code&gt; を得ます。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ gsutil cp gs://private-bucket/credentials.json ./
+$ gcloud kms encrypt &lt;span class="se"&gt;\&lt;/span&gt;
+    --plaintext-file&lt;span class="o"&gt;=&lt;/span&gt;./credentials.json &lt;span class="se"&gt;\&lt;/span&gt;
+    --ciphertext-file&lt;span class="o"&gt;=&lt;/span&gt;credentials.json.enc &lt;span class="se"&gt;\&lt;/span&gt;
+    --location&lt;span class="o"&gt;=&lt;/span&gt;global &lt;span class="se"&gt;\&lt;/span&gt;
+    --keyring&lt;span class="o"&gt;=&lt;/span&gt;service-account-credentials &lt;span class="se"&gt;\&lt;/span&gt;
+    --key&lt;span class="o"&gt;=&lt;/span&gt;gcal-api-json-cred &lt;span class="se"&gt;\&lt;/span&gt;
+    &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; rm ./credentials.json
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h1&gt;暗号化文字列を得る&lt;/h1&gt;
+&lt;p&gt;アプリケーションで取り扱いやすい様に Python で&lt;code&gt;credentials.json.enc&lt;/code&gt;を文字列に変換します。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ python
+&amp;gt;&amp;gt;&amp;gt; import base64, io
+&amp;gt;&amp;gt;&amp;gt; with io.open&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'credentials.json.enc'&lt;/span&gt;, &lt;span class="s1"&gt;'rb'&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; as f:
+&amp;gt;&amp;gt;&amp;gt;     base64.b64encode&lt;span class="o"&gt;(&lt;/span&gt;f.read&lt;span class="o"&gt;())&lt;/span&gt;.decode&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'ascii'&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+QOsAErqw....bI&lt;span class="o"&gt;=&lt;/span&gt;   &lt;span class="c1"&gt;# 暗号化されたクレデンシャル文字列&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;+  Stopped                 python
+$ &lt;span class="nb"&gt;exit&lt;/span&gt;
+&lt;span class="nb"&gt;logout&lt;/span&gt;
+There are stopped jobs.
+$
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h1&gt;秘密を復号化する&lt;/h1&gt;
+&lt;p&gt;次のようなコードでもって、復号化して使います。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;json&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;base64&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;b64decode&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;google.oauth2&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;service_account&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;googleapiclient.discovery&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;build&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;decrypt_credectial&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="n"&gt;kms_client&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;build&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'cloudkms'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'v1'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;key_path&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;'projects/&lt;/span&gt;&lt;span class="si"&gt;{pj}&lt;/span&gt;&lt;span class="s1"&gt;/locations/&lt;/span&gt;&lt;span class="si"&gt;{loc}&lt;/span&gt;&lt;span class="s1"&gt;/keyRings/&lt;/span&gt;&lt;span class="si"&gt;{key_ring}&lt;/span&gt;&lt;span class="s1"&gt;/cryptoKeys/&lt;/span&gt;&lt;span class="si"&gt;{key}&lt;/span&gt;&lt;span class="s1"&gt;'&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+        &lt;span class="n"&gt;pj&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;'Google のプロジェクト ID'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="n"&gt;loc&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;'KMS キーリングのロケーション。本例だと global'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="n"&gt;key_ring&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;'KMS キーリング名 '&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;'KMS キー名 '&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;crypto_keys&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;kms_client&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;projects&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;locations&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;keyRings&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cryptoKeys&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+    &lt;span class="n"&gt;kms_request&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;crypto_keys&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;decrypt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;key_path&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;body&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;'ciphertext'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;' 暗号化クレデンシャル '&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
+    &lt;span class="n"&gt;kms_response&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;kms_request&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;execute&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;json&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;loads&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;b64decode&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;kms_response&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'plaintext'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;encode&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'ascii'&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+
+&lt;span class="n"&gt;creds&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;service_account&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Credentials&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;from_service_account_info&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+    &lt;span class="n"&gt;decrypt_credectial&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt;
+    &lt;span class="n"&gt;scopes&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;
+        &lt;span class="s1"&gt;'https://www.googleapis.com/auth/calendar.events.readonly'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="s1"&gt;'https://www.googleapis.com/auth/calendar.readonly'&lt;/span&gt;
+    &lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;with_subject&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'username@gsuite-domain'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;前記事のコードと比べて&lt;a href="https://github.com/coleyon/gcalapi-caldav-sample/commit/1b247827a1d5feaa34a6de3e095a04c6ceee8dc8#diff-5bc02cefb3ea9e27f1a6776eabd1935d"&gt;このような違い&lt;/a&gt;があります。生クレデンシャルを文字列やファイルとしてソースコードに含める必要が無くなって、安心感が出ました。&lt;/p&gt;</content><category term="howto"/><category term="GoogleAPI"/><category term="python"/></entry><entry><title>GCP で Google Calendar を CalDAV サーバに複製する</title><link href="https://coleyon.github.io/google,%20python,%20programming.html" rel="alternate"/><published>2019-10-02T00:00:00+09:00</published><updated>2019-10-02T00:00:00+09:00</updated><author><name>coleyon</name></author><id>tag:coleyon.github.io,2019-10-02:/google, python, programming.html</id><summary type="html">&lt;p&gt;Python バッチスクリプトで Google Calendar からスケジュール情報を採取し、CalDAV サーバへ複製する例を紹介します。&lt;/p&gt;</summary><content type="html">&lt;p&gt;Python バッチスクリプトで Google Calendar からスケジュール情報を採取し、CalDAV サーバへ複製する例を紹介します。&lt;/p&gt;
 &lt;h1&gt;概要&lt;/h1&gt;
 &lt;ul&gt;
 &lt;li&gt;GSuite 上の任意のユーザの Calendar に、Google Calendar API を介してアクセスする&lt;/li&gt;
@@ -168,7 +249,7 @@ $
 &lt;p&gt;&lt;a href="https://github.com/coleyon/gcalapi-caldav-sample"&gt;https://github.com/coleyon/gcalapi-caldav-sample&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;構成&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;グレーは環境設定、ブルーはバッチ処理です。&lt;/p&gt;
-&lt;p&gt;&lt;img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-29-42.png"/&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="" src="/images/copy-gcal-to-caldav-with-gcp-2021-05-29-22-29-42.png"/&gt;&lt;/p&gt;
 &lt;h1&gt;1. GSuite で API アクセスを許可する&lt;/h1&gt;
 &lt;p&gt;アクセス対象としたいカレンダーが存在する GSuite 環境に対して、外部からの API アクセスを受付可能に設定をします。公式ドキュメントの、&lt;a href="https://support.google.com/a/answer/60757?hl=ja"&gt;管理コンソールで API アクセスを有効にする&lt;/a&gt; 手順になります。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;API リファレンスを有効にする&lt;/strong&gt;&lt;/p&gt;
@@ -183,7 +264,7 @@ $
 &lt;p&gt;&lt;img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-31-33.png"/&gt;
 &lt;img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-31-42.png"/&gt;&lt;/p&gt;
 &lt;p&gt;サービスアカウントのクライアント ID を確認します。クライアント ID は、バッチスクリプトの認証情報および、GSuite の API クライアントアクセス許可対象として使います。&lt;/p&gt;
-&lt;p&gt;&lt;img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-31-48.png"/&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="" src="/images/copy-gcal-to-caldav-with-gcp-2021-05-29-22-31-48.png"/&gt;&lt;/p&gt;
 &lt;h1&gt;3. GSuite で API クライアントアクセスを許可する&lt;/h1&gt;
 &lt;p&gt;GSuite で、どのリソースに対する API アクセス操作を、誰に許可するかを設定します。設定手順は、&lt;a href="https://support.google.com/a/answer/162106?hl=ja"&gt;OAuth: API クライアント アクセスの管理&lt;/a&gt; になります。&lt;/p&gt;
 &lt;p&gt;設定内容は、&lt;code&gt;クライアント名&lt;/code&gt; には先に GCP 上で作成したサービスアカウントの &lt;code&gt;クライアント ID&lt;/code&gt; を指定し、

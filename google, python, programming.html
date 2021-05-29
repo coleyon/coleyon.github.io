@@ -117,6 +117,18 @@
 </p>
 </header>
 <div>
+<p>この記事は、連載 "googleapis-caldav" の 1 件目の記事です。</p>
+<ol class="parts">
+<li class="active">
+<a href="https://coleyon.github.io/google, python, programming.html">GCP で Google Calendar を CalDAV サーバに複製する</a>
+</li>
+<li>
+<a href="https://coleyon.github.io/googleapis, python, programming.html">GCP KMS を使って秘密情報を対称暗号化・復号化する</a>
+</li>
+</ol>
+<hr/>
+</div>
+<div>
 <p>Python バッチスクリプトで Google Calendar からスケジュール情報を採取し、CalDAV サーバへ複製する例を紹介します。</p>
 <h1>概要</h1>
 <ul>
@@ -128,7 +140,7 @@
 <p><a href="https://github.com/coleyon/gcalapi-caldav-sample">https://github.com/coleyon/gcalapi-caldav-sample</a></p>
 <p><strong>構成</strong></p>
 <p>グレーは環境設定、ブルーはバッチ処理です。</p>
-<p><img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-29-42.png"/></p>
+<p><img alt="" src="/images/copy-gcal-to-caldav-with-gcp-2021-05-29-22-29-42.png"/></p>
 <h1>1. GSuite で API アクセスを許可する</h1>
 <p>アクセス対象としたいカレンダーが存在する GSuite 環境に対して、外部からの API アクセスを受付可能に設定をします。公式ドキュメントの、<a href="https://support.google.com/a/answer/60757?hl=ja">管理コンソールで API アクセスを有効にする</a> 手順になります。</p>
 <p><strong>API リファレンスを有効にする</strong></p>
@@ -143,7 +155,7 @@
 <p><img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-31-33.png"/>
 <img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-31-42.png"/></p>
 <p>サービスアカウントのクライアント ID を確認します。クライアント ID は、バッチスクリプトの認証情報および、GSuite の API クライアントアクセス許可対象として使います。</p>
-<p><img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-31-48.png"/></p>
+<p><img alt="" src="/images/copy-gcal-to-caldav-with-gcp-2021-05-29-22-31-48.png"/></p>
 <h1>3. GSuite で API クライアントアクセスを許可する</h1>
 <p>GSuite で、どのリソースに対する API アクセス操作を、誰に許可するかを設定します。設定手順は、<a href="https://support.google.com/a/answer/162106?hl=ja">OAuth: API クライアント アクセスの管理</a> になります。</p>
 <p>設定内容は、<code>クライアント名</code> には先に GCP 上で作成したサービスアカウントの <code>クライアント ID</code> を指定し、
@@ -232,6 +244,12 @@
 <a href="https://coleyon.github.io/tag/cloudfunctions.html">CloudFunctions</a>
 <a href="https://coleyon.github.io/tag/caldav.html">CalDAV</a>
 </p>
+</div>
+<div class="related-posts">
+<h4>You might enjoy</h4>
+<ul class="related-posts">
+<li><a href="https://coleyon.github.io/googleapis, python, programming.html">GCP KMS を使って秘密情報を対称暗号化・復号化する</a></li>
+</ul>
 </div>
 <script async="" src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins class="adsbygoogle ads-responsive" data-ad-client="ca-pub-8759671048737588" data-ad-slot="1234566"></ins>

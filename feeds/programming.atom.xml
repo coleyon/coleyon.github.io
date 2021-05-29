@@ -168,7 +168,7 @@ $
 &lt;p&gt;&lt;a href="https://github.com/coleyon/gcalapi-caldav-sample"&gt;https://github.com/coleyon/gcalapi-caldav-sample&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;構成&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;グレーは環境設定、ブルーはバッチ処理です。&lt;/p&gt;
-&lt;p&gt;&lt;img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-29-42.png"/&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="" src="/images/copy-gcal-to-caldav-with-gcp-2021-05-29-22-29-42.png"/&gt;&lt;/p&gt;
 &lt;h1&gt;1. GSuite で API アクセスを許可する&lt;/h1&gt;
 &lt;p&gt;アクセス対象としたいカレンダーが存在する GSuite 環境に対して、外部からの API アクセスを受付可能に設定をします。公式ドキュメントの、&lt;a href="https://support.google.com/a/answer/60757?hl=ja"&gt;管理コンソールで API アクセスを有効にする&lt;/a&gt; 手順になります。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;API リファレンスを有効にする&lt;/strong&gt;&lt;/p&gt;
@@ -183,7 +183,7 @@ $
 &lt;p&gt;&lt;img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-31-33.png"/&gt;
 &lt;img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-31-42.png"/&gt;&lt;/p&gt;
 &lt;p&gt;サービスアカウントのクライアント ID を確認します。クライアント ID は、バッチスクリプトの認証情報および、GSuite の API クライアントアクセス許可対象として使います。&lt;/p&gt;
-&lt;p&gt;&lt;img alt="" class="image-process-article-image" src="/images/derivatives/article-image/copy-gcal-to-caldav-with-gcp-2021-05-29-22-31-48.png"/&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="" src="/images/copy-gcal-to-caldav-with-gcp-2021-05-29-22-31-48.png"/&gt;&lt;/p&gt;
 &lt;h1&gt;3. GSuite で API クライアントアクセスを許可する&lt;/h1&gt;
 &lt;p&gt;GSuite で、どのリソースに対する API アクセス操作を、誰に許可するかを設定します。設定手順は、&lt;a href="https://support.google.com/a/answer/162106?hl=ja"&gt;OAuth: API クライアント アクセスの管理&lt;/a&gt; になります。&lt;/p&gt;
 &lt;p&gt;設定内容は、&lt;code&gt;クライアント名&lt;/code&gt; には先に GCP 上で作成したサービスアカウントの &lt;code&gt;クライアント ID&lt;/code&gt; を指定し、
