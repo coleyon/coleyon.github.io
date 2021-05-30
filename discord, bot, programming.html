@@ -88,7 +88,7 @@
 <nav>
 <ul class="list">
 <li>
-<a href="https://coleyon.github.io/pages/about-this-site.html#about-this-site" target="_self">
+<a href="https://coleyon.github.io/pages/about.html#about" target="_self">
                   About This Site
                 </a>
 </li>
@@ -176,7 +176,15 @@ Python と discord.py を使用します。</p>
 </ul>
 <p><strong>Docker サーバ環境をインストールする</strong></p>
 <p>こんな風になったと思います。</p>
-<div class="highlight"><pre><span></span><code>$ docker --version
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span>
+<span class="normal">9</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>$ docker --version
 Docker version <span class="m">19</span>.03.12, build 48a66213fe
 $ docker-compose --version
 docker-compose version <span class="m">1</span>.27.2, build 18f557f9
@@ -186,8 +194,17 @@ $ id
 ,999<span class="o">(</span>docker<span class="o">)</span>
 $ 
 </code></pre></div>
+</td></tr></table>
 <p><strong>Docker コンテナをビルドする</strong></p>
-<div class="highlight"><pre><span></span><code>$ git clone  https://github.com/coleyon/discord-partypoll.git
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span>
+<span class="normal">9</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>$ git clone  https://github.com/coleyon/discord-partypoll.git
 Cloning into <span class="s1">'discord-partypoll'</span>...
 ...
 Resolving deltas: <span class="m">100</span>% <span class="o">(</span><span class="m">136</span>/136<span class="o">)</span>, <span class="k">done</span>.
@@ -197,13 +214,20 @@ $ docker images <span class="p">|</span> grep partypoll
 discord-partypoll_discord-bot  latest ...
 $ 
 </code></pre></div>
+</td></tr></table>
 <h1>Bot を Discord サーバに誘う</h1>
 <p><strong>Discord アプリを作る</strong></p>
 <p><a href="https://discord.com/developers/applications">Developer Portal</a> 上でアプリケーションを作成します。</p>
 <p><img alt="" class="image-process-article-image" src="/images/derivatives/article-image/discord-cronlike-scheduling-2021-05-29-22-16-20.png"/></p>
 <p><strong>Bot の OAuth2 Token を Bot プログラムにセットする</strong></p>
 <p>アプリの <code>General Information</code> メニューから <code>Client Secret</code> を得て、<code>docker-compose.yml</code> の <code>DISCORD_BOT_TOKEN</code> にセットします。</p>
-<div class="highlight"><pre><span></span><code><span class="nt">version</span><span class="p">:</span> <span class="s">"3"</span>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nt">version</span><span class="p">:</span> <span class="s">"3"</span>
 <span class="nt">services</span><span class="p">:</span>
   <span class="nt">discord-bot</span><span class="p">:</span>
     <span class="nt">restart</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">always</span>
@@ -211,6 +235,7 @@ $
     <span class="nt">environment</span><span class="p">:</span> 
       <span class="nt">DISCORD_BOT_TOKEN</span><span class="p">:</span> <span class="s">"yourtoken"</span>
 </code></pre></div>
+</td></tr></table>
 <p><strong>Bot を Discord サーバに誘う</strong></p>
 <p>アプリの <code>OAuth2</code> メニューから Scopes が BOT となる OAuth2 URL を得ます Permissions は <code>Send Messages</code>, <code>Manage Messages</code>, <code>Attach Files</code>, <code>Mention Everyone</code>, <code>Add Reactions</code> を与えてください。</p>
 <p><strong>Bot を Discord サーバに誘う</strong></p>
@@ -219,11 +244,23 @@ $
 <h1>Bot プログラムを起動する</h1>
 <p><strong>Bot プログラムの依存ライブラリを生成する</strong></p>
 <p><code>Pipfile</code> から <code>requirements.yml</code> を生成します。</p>
-<div class="highlight"><pre><span></span><code>$ pipenv lock -r &gt; requirements.txt
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>$ pipenv lock -r &gt; requirements.txt
 </code></pre></div>
+</td></tr></table>
 <p><strong>Bot プログラムを起動する</strong></p>
 <p>Bot プログラム（の実行環境としての Docker コンテナ）を起動します。</p>
-<div class="highlight"><pre><span></span><code>$ docker-compose up -d
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>$ docker-compose up -d
 $ docker-compose logs -f
 Attaching to discord-partypoll_discord-bot_1
 discord-bot_1  <span class="p">|</span> -Logged <span class="k">in</span> info-
@@ -236,6 +273,7 @@ discord-bot_1  <span class="p">|</span> Cron Extension Enabled.
 ^CERROR: Aborting.
 $ 
 </code></pre></div>
+</td></tr></table>
 <p>Bot プログラムを起動すると、Discord 上の Bot がオンラインとなり、使用可能な状態になります。</p>
 <h1>パーティ募集コマンド ppoll を使ってみる</h1>
 <p><strong>募集全体の人数制限が可能な募集</strong></p>

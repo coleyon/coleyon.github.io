@@ -34,16 +34,25 @@
   ga('send', 'pageview');
 </script>
 <!-- End Google Analytics -->
-<meta content="coleyon" name="author"/>
-<meta content="subdescr" name="description"/>
-<meta content="wof" property="og:site_name"/>
-<meta content="blog" property="og:type"/>
-<meta content="wof" property="og:title"/>
-<meta content="subdescr" property="og:description"/>
+<meta content="Coleyon" name="author"/>
+<meta content="AWS Lambda 関数のデプロイパッケージ形態に、Docker コンテナイメージを選択できるようになりました。" name="description"/>
+<meta content="AWS, AWS Lambda, docker, python" name="keywords"/>
+<meta content="wof" property="og:site_name">
+<meta content="AWS Lambda をコンテナイメージでデプロイする" property="og:title"/>
+<meta content="AWS Lambda 関数のデプロイパッケージ形態に、Docker コンテナイメージを選択できるようになりました。" property="og:description"/>
 <meta content="ja_JP" property="og:locale"/>
-<meta content="https://coleyon.github.io" property="og:url"/>
+<meta content="https://coleyon.github.io/drafts/aws, lambda, docker.html" property="og:url"/>
+<meta content="article" property="og:type"/>
+<meta content="2021-05-29 12:00:00+09:00" property="article:published_time"/>
+<meta content="2021-05-29 12:00:00+09:00" property="article:modified_time"/>
+<meta content="https://coleyon.github.io/author/coleyon.html" property="article:author"/>
+<meta content="howto" property="article:section">
+<meta content="AWS" property="article:tag"/>
+<meta content="AWS Lambda" property="article:tag"/>
+<meta content="docker" property="article:tag"/>
+<meta content="python" property="article:tag"/>
 <meta content="https://coleyon.github.io/images/profile.png" property="og:image"/>
-<title>wof – Tag python</title>
+<title>wof – AWS Lambda をコンテナイメージでデプロイする</title>
 <script async="" src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <script>
     (adsbygoogle = window.adsbygoogle || []).push({
@@ -62,7 +71,7 @@
     f.parentNode.insertBefore(j,f);
   })(window,document,'script','dataLayer','GTM-MFGZCPR');
 </script>
-<!-- End Google Tag Manager --></link></head>
+<!-- End Google Tag Manager --></meta></meta></link></head>
 <body class="light-theme">
 <!-- Google Tag Manager -->
 <noscript>
@@ -80,7 +89,7 @@
 <nav>
 <ul class="list">
 <li>
-<a href="https://coleyon.github.io/pages/about-this-site.html#about-this-site" target="_self">
+<a href="https://coleyon.github.io/pages/about.html#about" target="_self">
                   About This Site
                 </a>
 </li>
@@ -113,26 +122,73 @@
 <a href="/tags.html">Tags</a>
 <a href="https://coleyon.github.io/feeds/all.atom.xml">Atom</a>
 </nav>
-<article>
+<article class="single">
 <header>
-<h2><a href="https://coleyon.github.io/google, python, programming.html#google, python, programming">GCP で Google Calendar を CalDAV サーバに複製する</a></h2>
+<h1 id="aws, lambda, docker">AWS Lambda をコンテナイメージでデプロイする</h1>
 <p>
-      Posted on 2019-10-02 (水) in <a href="https://coleyon.github.io/category/programming.html">programming</a>
+      Posted on 2021-05-29 (土) in <a href="https://coleyon.github.io/category/howto.html">howto</a>
 </p>
 </header>
 <div>
-<p>Python バッチスクリプトで Google Calendar からスケジュール情報を採取し、CalDAV サーバへ複製する例を紹介します。</p>
-<br/>
-<a class="btn" href="https://coleyon.github.io/google, python, programming.html#google, python, programming">
-          Continue reading
-        </a>
 </div>
+<div>
+<h1>概要</h1>
+<p>2020 年の 12 月に、AWS Lambda 関数のデプロイパッケージ形態に、Docker コンテナイメージを選択できるようになりました。
+早速試してみたところ使い勝手も良好でしたので記事化してみます。</p>
+<ul>
+<li>https://dev.classmethod.jp/articles/lambda-support-oci-container-image/</li>
+<li>https://dev.classmethod.jp/articles/reinvent2020-svs209/</li>
+</ul>
+<h1>ダイジェスト</h1>
+<ul>
+<li>CodeCommit -&gt; CodeBuild -&gt; ECR -&gt; Lambda の流れでデプロイ</li>
+<li>Amazon Linux2 ベースの python 3.8 コンテナベース</li>
+<li>python 3.8 ベースの ETL スクリプト</li>
+<li>パッケージ : cx_Oracle + Pandas + boto3</li>
+<li>パスワードなどのシークレットは Secret Manager で管理</li>
+</ul>
+<h1>何がうれしいの？</h1>
+<p>従来は、AWS Lambda のデプロイパッケージサイズの上限は、Zip アーカイブとレイヤ一式の合計サイズの<a href="https://docs.aws.amazon.com/ja_jp/lambda/latest/dg/gettingstarted-limits.html">250MB が上限</a>でしたが、新たにイメージサイズが最大 10GB の Docker コンテナイメージによるデプロイがサポートされるようになったことで、より大きなコードや環境のデプロイが可能になりました。</p>
+<p>私は Python で、複数のシステム間の ETL を書く機会が多いのですが、ETL って Storage, RDB, WebAPI などのような複数の技術やデータソースを扱うため、自然と扱うライブラリが増えるんですよね。すると、100 行に満たない実行時間が 10～20 秒ほどのコードでも、ライブラリのサイズつまり AWS Lambda のレイヤーの合計サイズは上限の 250MB を簡単に上回ります。つまり、処理の規模は FaaS 向きなのに、Lambda ではなく AWS Batch や EC2 の利用が視野に入ってしまい、あまりクラウド上で開発するメリットが出しにくい。というジレンマがありました。</p>
+<h1>コンテナを書く</h1>
+<h1>コンテナイメージを ECR に登録する</h1>
+<h1>コンテナイメージを AWS Lambda へデプロイする</h1>
+</div>
+<div class="tag-cloud">
+<p>
+<a href="https://coleyon.github.io/tag/aws.html">AWS</a>
+<a href="https://coleyon.github.io/tag/aws-lambda.html">AWS Lambda</a>
+<a href="https://coleyon.github.io/tag/docker.html">docker</a>
+<a href="https://coleyon.github.io/tag/python.html">python</a>
+</p>
+</div>
+<div class="related-posts">
+<h4>関連性が高い記事</h4>
+<ul class="related-posts">
+<li><a href="https://coleyon.github.io/discord, bot, programming.html">Discord の Bot に定時実行をさせてみよう</a></li>
+<li><a href="https://coleyon.github.io/google, python, programming.html">GCP で Google Calendar を CalDAV サーバに複製する</a></li>
+</ul>
+</div>
+<script async="" src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle ads-responsive" data-ad-client="ca-pub-8759671048737588" data-ad-slot="1234566"></ins>
+<script>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'coleyon-dev';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+    Please enable JavaScript to view comments.
+</noscript>
+<!-- End Disqus -->
 </article>
-<div class="pagination">
-<a class="btn float-right" href="https://coleyon.github.io/tag/python2.html">
-      Newer Posts <i class="fa fa-angle-right"></i>
-</a>
-</div>
 <footer>
 <p>
   © 2021  - This work is licensed under a <a href="http://creativecommons.org/licenses/by-sa/4.0/deed.en_US" rel="license" target="_blank">Creative Commons Attribution-ShareAlike</a>

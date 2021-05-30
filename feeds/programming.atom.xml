@@ -37,7 +37,15 @@ Python と discord.py を使用します。&lt;/p&gt;
 &lt;/ul&gt;
 &lt;p&gt;&lt;strong&gt;Docker サーバ環境をインストールする&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;こんな風になったと思います。&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ docker --version
+&lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt;&lt;span class="normal"&gt;1&lt;/span&gt;
+&lt;span class="normal"&gt;2&lt;/span&gt;
+&lt;span class="normal"&gt;3&lt;/span&gt;
+&lt;span class="normal"&gt;4&lt;/span&gt;
+&lt;span class="normal"&gt;5&lt;/span&gt;
+&lt;span class="normal"&gt;6&lt;/span&gt;
+&lt;span class="normal"&gt;7&lt;/span&gt;
+&lt;span class="normal"&gt;8&lt;/span&gt;
+&lt;span class="normal"&gt;9&lt;/span&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ docker --version
 Docker version &lt;span class="m"&gt;19&lt;/span&gt;.03.12, build 48a66213fe
 $ docker-compose --version
 docker-compose version &lt;span class="m"&gt;1&lt;/span&gt;.27.2, build 18f557f9
@@ -47,8 +55,17 @@ $ id
 ,999&lt;span class="o"&gt;(&lt;/span&gt;docker&lt;span class="o"&gt;)&lt;/span&gt;
 $ 
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;p&gt;&lt;strong&gt;Docker コンテナをビルドする&lt;/strong&gt;&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ git clone  https://github.com/coleyon/discord-partypoll.git
+&lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt;&lt;span class="normal"&gt;1&lt;/span&gt;
+&lt;span class="normal"&gt;2&lt;/span&gt;
+&lt;span class="normal"&gt;3&lt;/span&gt;
+&lt;span class="normal"&gt;4&lt;/span&gt;
+&lt;span class="normal"&gt;5&lt;/span&gt;
+&lt;span class="normal"&gt;6&lt;/span&gt;
+&lt;span class="normal"&gt;7&lt;/span&gt;
+&lt;span class="normal"&gt;8&lt;/span&gt;
+&lt;span class="normal"&gt;9&lt;/span&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ git clone  https://github.com/coleyon/discord-partypoll.git
 Cloning into &lt;span class="s1"&gt;'discord-partypoll'&lt;/span&gt;...
 ...
 Resolving deltas: &lt;span class="m"&gt;100&lt;/span&gt;% &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;136&lt;/span&gt;/136&lt;span class="o"&gt;)&lt;/span&gt;, &lt;span class="k"&gt;done&lt;/span&gt;.
@@ -58,13 +75,20 @@ $ docker images &lt;span class="p"&gt;|&lt;/span&gt; grep partypoll
 discord-partypoll_discord-bot  latest ...
 $ 
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;h1&gt;Bot を Discord サーバに誘う&lt;/h1&gt;
 &lt;p&gt;&lt;strong&gt;Discord アプリを作る&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a href="https://discord.com/developers/applications"&gt;Developer Portal&lt;/a&gt; 上でアプリケーションを作成します。&lt;/p&gt;
 &lt;p&gt;&lt;img alt="" class="image-process-article-image" src="/images/derivatives/article-image/discord-cronlike-scheduling-2021-05-29-22-16-20.png"/&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Bot の OAuth2 Token を Bot プログラムにセットする&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;アプリの &lt;code&gt;General Information&lt;/code&gt; メニューから &lt;code&gt;Client Secret&lt;/code&gt; を得て、&lt;code&gt;docker-compose.yml&lt;/code&gt; の &lt;code&gt;DISCORD_BOT_TOKEN&lt;/code&gt; にセットします。&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="nt"&gt;version&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;"3"&lt;/span&gt;
+&lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt;&lt;span class="normal"&gt;1&lt;/span&gt;
+&lt;span class="normal"&gt;2&lt;/span&gt;
+&lt;span class="normal"&gt;3&lt;/span&gt;
+&lt;span class="normal"&gt;4&lt;/span&gt;
+&lt;span class="normal"&gt;5&lt;/span&gt;
+&lt;span class="normal"&gt;6&lt;/span&gt;
+&lt;span class="normal"&gt;7&lt;/span&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="nt"&gt;version&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;"3"&lt;/span&gt;
 &lt;span class="nt"&gt;services&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
   &lt;span class="nt"&gt;discord-bot&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
     &lt;span class="nt"&gt;restart&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;always&lt;/span&gt;
@@ -72,6 +96,7 @@ $
     &lt;span class="nt"&gt;environment&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; 
       &lt;span class="nt"&gt;DISCORD_BOT_TOKEN&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;"yourtoken"&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;p&gt;&lt;strong&gt;Bot を Discord サーバに誘う&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;アプリの &lt;code&gt;OAuth2&lt;/code&gt; メニューから Scopes が BOT となる OAuth2 URL を得ます Permissions は &lt;code&gt;Send Messages&lt;/code&gt;, &lt;code&gt;Manage Messages&lt;/code&gt;, &lt;code&gt;Attach Files&lt;/code&gt;, &lt;code&gt;Mention Everyone&lt;/code&gt;, &lt;code&gt;Add Reactions&lt;/code&gt; を与えてください。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Bot を Discord サーバに誘う&lt;/strong&gt;&lt;/p&gt;
@@ -80,11 +105,23 @@ $
 &lt;h1&gt;Bot プログラムを起動する&lt;/h1&gt;
 &lt;p&gt;&lt;strong&gt;Bot プログラムの依存ライブラリを生成する&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;Pipfile&lt;/code&gt; から &lt;code&gt;requirements.yml&lt;/code&gt; を生成します。&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ pipenv lock -r &amp;gt; requirements.txt
+&lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt;&lt;span class="normal"&gt;1&lt;/span&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ pipenv lock -r &amp;gt; requirements.txt
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;p&gt;&lt;strong&gt;Bot プログラムを起動する&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Bot プログラム（の実行環境としての Docker コンテナ）を起動します。&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ docker-compose up -d
+&lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt;&lt;span class="normal"&gt; 1&lt;/span&gt;
+&lt;span class="normal"&gt; 2&lt;/span&gt;
+&lt;span class="normal"&gt; 3&lt;/span&gt;
+&lt;span class="normal"&gt; 4&lt;/span&gt;
+&lt;span class="normal"&gt; 5&lt;/span&gt;
+&lt;span class="normal"&gt; 6&lt;/span&gt;
+&lt;span class="normal"&gt; 7&lt;/span&gt;
+&lt;span class="normal"&gt; 8&lt;/span&gt;
+&lt;span class="normal"&gt; 9&lt;/span&gt;
+&lt;span class="normal"&gt;10&lt;/span&gt;
+&lt;span class="normal"&gt;11&lt;/span&gt;
+&lt;span class="normal"&gt;12&lt;/span&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ docker-compose up -d
 $ docker-compose logs -f
 Attaching to discord-partypoll_discord-bot_1
 discord-bot_1  &lt;span class="p"&gt;|&lt;/span&gt; -Logged &lt;span class="k"&gt;in&lt;/span&gt; info-
@@ -97,6 +134,7 @@ discord-bot_1  &lt;span class="p"&gt;|&lt;/span&gt; Cron Extension Enabled.
 ^CERROR: Aborting.
 $ 
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;p&gt;Bot プログラムを起動すると、Discord 上の Bot がオンラインとなり、使用可能な状態になります。&lt;/p&gt;
 &lt;h1&gt;パーティ募集コマンド ppoll を使ってみる&lt;/h1&gt;
 &lt;p&gt;&lt;strong&gt;募集全体の人数制限が可能な募集&lt;/strong&gt;&lt;/p&gt;
